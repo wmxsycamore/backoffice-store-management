@@ -26,7 +26,8 @@ module.exports = {
     }],
     'no-shadow': ['error', { 'allow': ['state', 'getters'] }],
     'no-param-reassign': 0,
-    'max-len': ['error', { 'code': 150, 'tabWidth': 2 }]
+    'max-len': ['error', { 'code': 150, 'tabWidth': 2 }],
+    'no-plusplus': ["error", { "allowForLoopAfterthoughts": true }]
   },
   parserOptions: {
     parser: 'babel-eslint',
