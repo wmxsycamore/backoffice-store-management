@@ -22,6 +22,11 @@ const routes = [
         // component: () => import('../../views/Index/index.vue'),
         component: 'Index/index',
       },
+      {
+        // path: '/Shop/goods/List',
+        // name: 'list',
+        component: 'Shop/Goods/List',
+      },
     ],
   },
   {
@@ -37,11 +42,25 @@ const routes = [
   },
 ];
 
-
+// 去除index
+function getValue(str) {
+  const index = str.lastIndexOf('/');
+  const val = str.substring(index + 1, str.length);
+  if (val === 'index') {
+    return str.substring(index, -1);
+  }
+  return str;
+}
 // 自动生成路由
 function createRoute(arr) {
   for (let i = 0; i < arr.length; i += 1) {
     if (!arr[i].component) return;
+    // 去除index
+    const val = getValue(arr[i].component.toLowerCase());
+    arr[i].name = arr[i].name || val.replace(/\//g, '_');
+    // 生成name
+    // 生成path
+    arr[i].path = arr[i].path || `/${val}`;
     // 自动生成component
     const componentFun = import(`../../views/${arr[i].component}.vue`);
     arr[i].component = () => componentFun;
