@@ -5,16 +5,16 @@
  * 三、填写后不会自动生成
  */
 const routes = [
+
   {
-    // path: '/layout',
-    // name: 'layout',
     // redirect:重定向，在layout路径下都会默认先进入index页面
-    redirect: { name: 'index' },
+    // redirect: { name: 'index' },
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     // component: () => import(/* webpackChunkName: "about" */ '../../views/Layout.vue'),
     component: 'Layout',
+
     children: [
       {
         // path: '/index',
@@ -23,8 +23,6 @@ const routes = [
         component: 'Index/index',
       },
       {
-        // path: '/Shop/goods/List',
-        // name: 'list',
         component: 'Shop/Goods/List',
       },
     ],
@@ -69,7 +67,7 @@ function createRoute(arr) {
     }
   }
 }
-// 获取路由信息方法
+// 获取路由信息方法l
 const getRoutes = () => {
   // 生成路由详细信息
   createRoute(routes);

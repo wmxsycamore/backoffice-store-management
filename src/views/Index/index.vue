@@ -1,6 +1,8 @@
 <template>
 <!-- 首页 -->
-  <div class="index">首页</div>
+  <div class="index">
+
+  </div>
 </template>
 
 <script>

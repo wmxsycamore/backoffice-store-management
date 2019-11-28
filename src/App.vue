@@ -1,9 +1,9 @@
 <template>
-  <div id="app">主页
+  <div id="app">
     <router-view></router-view>
   </div>
 </template>
 
-<style>
+<style src='./common/css/common.css'>
 
 </style>
