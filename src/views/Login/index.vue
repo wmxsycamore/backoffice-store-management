@@ -3,7 +3,7 @@
     <el-col :xs="16" :sm="10" :md="8" :lg="8"  :xl="6">
         <el-card>
           <div slot="header">
-              <span>UNI-LOGIN</span>
+              <span>{{$conf.logo}}</span>
           </div>
           <div>
             <el-form :rules="rules" :model="loginForm" ref="ruleForm">
