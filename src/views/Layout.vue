@@ -38,15 +38,15 @@
         </el-aside>
         <!-- 主布局 -->
         <el-main>
-          <div class="bread">
+          <div class="bread" v-if="bran.length > 0">
             <!-- 面包屑导航 -->
             <el-breadcrumb separator="/">
-              <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-              <el-breadcrumb-item><a href="/">活动管理</a></el-breadcrumb-item>
-              <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-              <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+              <el-breadcrumb-item v-for="(item,index) in bran" :key="index"  :to="{ path: item.path }">
+                {{item.title}}
+              </el-breadcrumb-item>
             </el-breadcrumb>
           </div>
+          <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -65,12 +65,20 @@ export default {
   data() {
     return {
       navBar: [],
+      bran: [],
     };
   },
   created() {
     this.navBar = this.$conf.navBar;
     // 获取面包屑导航
     this.getRouterBran();
+  },
+  watch: {
+    $route(to, from) {
+      console.log(to);
+      console.log(from);
+      this.getRouterBran();
+    },
   },
   computed: {
     slideMenuActive: {
@@ -87,26 +95,35 @@ export default {
     },
   },
   methods: {
-    handleSelect(key, keyPath) {
+    handleSelect(key) {
       // console.log(key, keyPath);
       this.navBar.active = key;
     },
-    slideSelect(key, keyPath) {
+    slideSelect(key) {
       this.slideMenuActive = key;
+      // 跳转指定页面
+      this.$router.push({ name: this.slideMenu[key].pathName });
+      // console.log(this.slideMenu[key]);
     },
     getRouterBran() {
+      // console.log(this.$route);
       const b = this.$route.matched.filter(v => v.name);
+      // 首页不需要出现在面包屑导航里
       const arr = [];
-      b.forEach((v, k) => {
-        if (v.name === 'index' || v.name === 'layout') {
-          arr.push({
-            name: v.name,
-            path: v.path,
-          });
-        }
+      b.forEach(v => {
+        if (v.name === 'index' || v.name === 'layout') return;
+        arr.push({
+          name: v.name,
+          path: v.path,
+          title: v.meta.title,
+        });
       });
-
-      console.log(this.$route.matched);
+      if (arr.length > 0) {
+        arr.unshift({ name: 'index', path: '/index', title: '后台首页' });
+      }
+      this.bran = arr;
+      // console.log(this.$route.matched);
+      console.log(arr);
     },
   },
 };

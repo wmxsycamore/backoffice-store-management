@@ -1,8 +1,6 @@
 <template>
 <!-- 首页 -->
-  <div class="index">
-
-  </div>
+  <div class="index">后台首页</div>
 </template>
 
 <script>

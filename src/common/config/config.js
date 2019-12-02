@@ -10,17 +10,25 @@ export default {
           {
             icon: 'el-icon-s-home',
             name: '后台首页',
+            pathName: 'index',
           },
           {
             icon: 'el-icon-s-claim',
             name: '商品列表',
+            pathName: 'shop_goods_list',
           },
         ],
       },
       {
         name: '商品',
         subActive: 0,
-        submenu: [],
+        submenu: [
+          {
+            icon: 'el-icon-s-claim',
+            name: '商品列表',
+            pathName: 'shop_goods_list',
+          },
+        ],
       },
       {
         name: '订单',
