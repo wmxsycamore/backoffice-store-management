@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import ElementUi from 'element-ui';
-import App from './App.vue';
 import router from './router';
+import App from './App.vue';
 import store from './store';
 
 // 引入全局配置文件

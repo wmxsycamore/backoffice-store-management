@@ -1,3 +1,4 @@
+// 配置菜单
 export default {
   logo: 'UNI-ADMIN',
   navBar: {
@@ -33,17 +34,23 @@ export default {
       {
         name: '订单',
         subActive: 0,
-        submenu: [],
+        submenu: [
+          { pathName: 'shop_goods_list' },
+        ],
       },
       {
         name: '会员',
         subActive: 0,
-        submenu: [],
+        submenu: [
+          { pathName: 'shop_goods_list' },
+        ],
       },
       {
         name: '设置',
         subActive: 0,
-        submenu: [],
+        submenu: [
+          { pathName: 'shop_goods_list' },
+        ],
       },
 
     ],

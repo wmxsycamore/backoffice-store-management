@@ -26,18 +26,17 @@
         <!-- 侧边布局 -->
         <el-aside width="200px">
           <el-menu
-            default-active="0"
+            :default-active="slideMenuActive"
             @select="slideSelect"
             style="height:100%">
             <el-menu-item :index="index | numToString" v-for="(item,index) in slideMenu" :key="index">
               <i :class="item.icon"></i>
               <span slot="title">{{item.name}}</span>
             </el-menu-item>
-
           </el-menu>
         </el-aside>
         <!-- 主布局 -->
-        <el-main>
+        <el-main style="background:#eee">
           <div class="bread" v-if="bran.length > 0">
             <!-- 面包屑导航 -->
             <el-breadcrumb separator="/">
@@ -47,6 +46,9 @@
             </el-breadcrumb>
           </div>
           <router-view></router-view>
+
+          <el-backtop target=".el-main" :bottom="100">
+          </el-backtop>
         </el-main>
       </el-container>
     </el-container>
@@ -72,11 +74,18 @@ export default {
     this.navBar = this.$conf.navBar;
     // 获取面包屑导航
     this.getRouterBran();
+    // 初始化选中菜单
+    this.initNavBar();
   },
   watch: {
-    $route(to, from) {
-      console.log(to);
-      console.log(from);
+    $route() {
+      // console.log(to);
+      // console.log(from);
+      // 本地存储
+      localStorage.setItem('navActive', JSON.stringify({
+        top: this.navBar.active,
+        left: this.slideMenuActive,
+      }));
       this.getRouterBran();
     },
   },
@@ -98,6 +107,11 @@ export default {
     handleSelect(key) {
       // console.log(key, keyPath);
       this.navBar.active = key;
+      // 默认跳转到当前激活的那一个
+      this.slideMenuActive = '0';
+      if (this.slideMenu.length > 0) {
+        this.$router.push({ name: this.slideMenu[this.slideMenuActive].pathName });
+      }
     },
     slideSelect(key) {
       this.slideMenuActive = key;
@@ -119,11 +133,22 @@ export default {
         });
       });
       if (arr.length > 0) {
-        arr.unshift({ name: 'index', path: '/index', title: '后台首页' });
+        arr.unshift({
+          name: 'index', path: '/index', title: '后台首页',
+        });
       }
       this.bran = arr;
       // console.log(this.$route.matched);
-      console.log(arr);
+      // console.log(arr);
+    },
+    initNavBar() {
+      let r = localStorage.getItem('navActive');
+      if (r) {
+        r = JSON.parse(r);
+        console.log(r);
+        this.navBar.active = r.top;
+        this.slideMenuActive = r.left;
+      }
     },
   },
 };
@@ -145,6 +170,9 @@ export default {
     .bread {
       border-bottom: 1px solid #eee;
       padding: 20px;
+      background: #fff;
+      position: sticky;
+      top: 0;
     }
   }
 }
