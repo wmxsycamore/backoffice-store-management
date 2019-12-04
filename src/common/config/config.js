@@ -18,6 +18,11 @@ export default {
             name: '商品列表',
             pathName: 'shop_goods_list',
           },
+          {
+            icon: 'el-icon-picture',
+            name: '图片管理',
+            pathName: 'images',
+          },
         ],
       },
       {

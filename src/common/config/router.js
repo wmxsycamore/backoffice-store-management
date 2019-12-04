@@ -26,6 +26,10 @@ const routes = [
         meta: { title: '商品列表' },
         component: 'Shop/Goods/List',
       },
+      {
+        meta: { title: '图片管理' },
+        component: 'Images/index',
+      },
     ],
   },
   {
