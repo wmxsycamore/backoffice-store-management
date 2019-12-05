@@ -36,7 +36,7 @@
           </el-menu>
         </el-aside>
         <!-- 主布局 -->
-        <el-main style="background:#eee">
+        <el-main style="background:#eee;padding-bottom:60px">
           <div class="bread" v-if="bran.length > 0">
             <!-- 面包屑导航 -->
             <el-breadcrumb separator="/">
@@ -46,7 +46,6 @@
             </el-breadcrumb>
           </div>
           <router-view></router-view>
-
           <el-backtop target=".el-main" :bottom="100">
           </el-backtop>
         </el-main>

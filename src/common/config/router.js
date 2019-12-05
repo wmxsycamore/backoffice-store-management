@@ -23,12 +23,16 @@ const routes = [
         component: 'Index/index',
       },
       {
+        meta: { title: '图片管理' },
+        component: 'Images/index',
+      },
+      {
         meta: { title: '商品列表' },
         component: 'Shop/Goods/List',
       },
       {
-        meta: { title: '图片管理' },
-        component: 'Images/index',
+        meta: { title: '商品规格' },
+        component: 'Shop/Size/ProSpec',
       },
     ],
   },

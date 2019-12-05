@@ -14,43 +14,27 @@
       </el-col>
     </el-row>
     <el-row :gutter="20" style="margin-top:20px">
-      <el-col class="el-col-flex" :span="12" style="height:370px;">
-        <el-card>
-          <div slot="header" class="clearfix">
-              <span>店铺及商品提示</span>
-              <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-          </div>
-          <div v-for="o in 4" :key="o" class="text item">
-            {{'列表内容 ' + o }}
-          </div>
-        </el-card>
-        <el-card>
-          <div slot="header" class="clearfix">
-            <span>卡片名称</span>
-            <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-          </div>
-          <div v-for="o in 4" :key="o" class="text item">
-            {{'列表内容 ' + o }}
-          </div>
-        </el-card>
+      <el-col class="el-col-flex" :span="12" style="height:473px">
+        <!-- 店铺及商品提示 -->
+        <el-layout :title="titleShop" :data="dataShop" :type="'row'"></el-layout>
+        <!-- 交易提示 -->
+        <el-layout :title="titleTride" :data="dataTride" :type="'row'"></el-layout>
       </el-col>
       <el-col :span="12">
-        <el-card style="height:370px">
-          <div slot="header" class="clearfix">
-              <span>卡片名称</span>
-              <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-          </div>
-          <div v-for="o in 4" :key="o" class="text item">
-            {{'列表内容 ' + o }}
-          </div>
-        </el-card>
+        <!-- 订单总数统计 -->
+        <el-layout :title="titleOrder" :data="dataOrder" :type="'chart'"></el-layout>
       </el-col>
     </el-row>
-    <el-layout :title="titleShop" :data="dataShop" :type='row'></el-layout>
-    <el-layout :title="titleTride" :data="dataTride" :type='row'></el-layout>
-    <el-layout :title="titleOrder" :data="dataOrder" :type='chart'></el-layout>
-    <el-layout :title="titlesales" :data="dataSales" :type='display'></el-layout>
-    <el-layout :title="titleRank" :data="dataRank" :type='table'></el-layout>
+    <el-row :gutter="20" style="margin-top:20px">
+      <el-col :span="12">
+        <!-- 销售情况统计 -->
+        <el-layout :title="titlesales" :data="dataSales" :type="'display'"></el-layout>
+        </el-col>
+      <el-col :span="12">
+        <!-- 单品销售排名 -->
+        <el-layout :title="titleRank" :data="dataRank" :type="'table'"></el-layout>
+        </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -86,31 +70,26 @@ export default {
           icon: 'el-icon-s-data',
         },
       ],
-      dataList: [
-        {
-          num: '',
-          desc: '',
-        },
-      ],
+      type: '',
       titleShop: {
-        left: '',
-        right: '',
+        left: '店铺及商品提示',
+        right: '您需要关注的店铺信息以及待处理事项',
       },
       titleTride: {
-        left: '',
-        right: '',
+        left: '交易提示',
+        right: '您需要立即处理的交易订单',
       },
       titleOrder: {
-        left: '',
-        right: '',
+        left: '订单总数统计',
+        right: '订单数量',
       },
       titlesales: {
-        left: '',
-        right: '',
+        left: '销售情况统计',
+        right: '按周期统计商家店铺的订单量和订单金额',
       },
       titleRank: {
-        left: '',
-        right: '',
+        left: '单品销售排名',
+        right: '按周期统计商家店铺的订单量和订单金额',
       },
       dataShop: [
         { num: 64, desc: '出售中' },
@@ -127,14 +106,99 @@ export default {
         { num: '3', desc: '待售后' },
       ],
       dataOrder: [
-        {},
+        {
+          title: {
+            text: '',
+          },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross',
+              label: {
+                backgroundColor: '#6a7985',
+              },
+            },
+          },
+          legend: {
+            data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎'],
+          },
+          // toolbox: {
+          //   feature: {
+          //     saveAsImage: {},
+          //   },
+          // },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true,
+          },
+          xAxis: [
+            {
+              type: 'category',
+              boundaryGap: false,
+              data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+            },
+          ],
+          yAxis: [
+            {
+              type: 'value',
+            },
+          ],
+          series: [
+            {
+              name: '邮件营销',
+              type: 'line',
+              stack: '总量',
+              areaStyle: {},
+              data: [120, 132, 101, 134, 90, 230, 210],
+            },
+            {
+              name: '联盟广告',
+              type: 'line',
+              stack: '总量',
+              areaStyle: {},
+              data: [220, 182, 191, 234, 290, 330, 310],
+            },
+            {
+              name: '视频广告',
+              type: 'line',
+              stack: '总量',
+              areaStyle: {},
+              data: [150, 232, 201, 154, 190, 330, 410],
+            },
+            {
+              name: '直接访问',
+              type: 'line',
+              stack: '总量',
+              areaStyle: { normal: {} },
+              data: [320, 332, 301, 334, 390, 330, 320],
+            },
+            {
+              name: '搜索引擎',
+              type: 'line',
+              stack: '总量',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'top',
+                },
+              },
+              areaStyle: { normal: {} },
+              data: [820, 932, 901, 934, 1290, 1330, 1320],
+            },
+          ],
+        },
       ],
-      datasales: [
+      dataSales: [
         { time: '昨日销量', num: 12, money: 12 },
         { time: '本月销量', num: 12, money: 12 },
       ],
       dataRank: [
-        {},
+        { info: '小天鹅（little swan）滚筒洗衣机', amount: 9 },
+        { info: '话回公子男装裤子', amount: 9 },
+        { info: '拉夏贝尔羽绒服长款', amount: 24 },
+        { info: '空气加湿器 ins风', amount: 2 },
       ],
     };
   },
