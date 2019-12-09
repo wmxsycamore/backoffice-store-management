@@ -26,7 +26,7 @@ export default {
           {
             icon: 'el-icon-s-claim',
             name: '商品规格',
-            pathName: 'shop_goods_size',
+            pathName: 'shop_size_prospec',
           },
         ],
       },

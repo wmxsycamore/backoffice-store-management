@@ -13,12 +13,12 @@
          active-text-color="#ffd04b">
          <el-menu-item :index="index | numToString" v-for="(item,index) in navBar.list" :key="index">{{item.name}}</el-menu-item>
          <el-submenu index="6" style="width:160px">
-           <template slot="title">
-             <el-avatar shape="circle" :size="50" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"></el-avatar>
-             用户名称
+            <template slot="title">
+             <i class="el-icon-user-solid" style="color: #fff"></i>
+              <span>用户名称</span>
             </template>
-           <el-menu-item index="6-1">修改</el-menu-item>
-           <el-menu-item index="6-2">退出</el-menu-item>
+            <el-menu-item index="6-1">修改</el-menu-item>
+            <el-menu-item index="6-2">退出</el-menu-item>
          </el-submenu>
         </el-menu>
       </el-header>
@@ -36,7 +36,7 @@
           </el-menu>
         </el-aside>
         <!-- 主布局 -->
-        <el-main style="background:#eee;padding-bottom:60px">
+        <el-main style="background:#eee;padding-bottom:60px;position:relative">
           <div class="bread" v-if="bran.length > 0">
             <!-- 面包屑导航 -->
             <el-breadcrumb separator="/">
@@ -153,7 +153,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .el-container.is-vertical {
   position: absolute;
   left:0;
@@ -188,9 +188,12 @@ export default {
     line-height: 60px;
   }
 }
+.el-submenu__title {
 .el-avatar {
   img {
-    width: 15%;
+    display: block;
+    width: 20px;
   }
+}
 }
 </style>
