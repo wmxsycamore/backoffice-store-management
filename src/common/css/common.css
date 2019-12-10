@@ -18,3 +18,13 @@
   border-radius: 0;
   background: rgba(0,0,0,0.1);
 }
+.el-message-box__btns {
+  display: flex;
+ justify-content: flex-end;
+}
+.el-message-box__btns .el-button {
+  width: 60px;
+}
+.el-dailog .el-dialog__header{
+  text-align: left;
+}

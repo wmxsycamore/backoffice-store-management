@@ -104,13 +104,19 @@ export default {
   },
   methods: {
     handleSelect(key) {
-      // console.log(key, keyPath);
+      if (key === '6-1') {
+        return console.log('修改成功');
+      }
+      if (key === '6-2') {
+        return console.log('退出成功');
+      }
       this.navBar.active = key;
       // 默认跳转到当前激活的那一个
       this.slideMenuActive = '0';
       if (this.slideMenu.length > 0) {
         this.$router.push({ name: this.slideMenu[this.slideMenuActive].pathName });
       }
+      return '';
     },
     slideSelect(key) {
       this.slideMenuActive = key;
@@ -144,7 +150,7 @@ export default {
       let r = localStorage.getItem('navActive');
       if (r) {
         r = JSON.parse(r);
-        console.log(r);
+        // console.log(r);
         this.navBar.active = r.top;
         this.slideMenuActive = r.left;
       }

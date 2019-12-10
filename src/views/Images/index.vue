@@ -3,21 +3,34 @@
 <!-- 相册管理 -->
    <el-container>
     <el-header>
-      <el-select v-model="value" placeholder="请选择">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-      </el-input>
-      <el-button type="success">搜索</el-button>
+      <div class="left">
+        <el-select v-model="value" placeholder="请选择图片排序方式">
+          <el-option
+            v-for="item in searchForm.orderOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        <el-input placeholder="请输入相册名称" v-model="searchForm.keyword" class="input-with-select">
+        </el-input>
+        <el-button type="success" size="medium">搜索</el-button>
+      </div>
+      <div class="right">
+        <el-button type="success" size="medium">创建相册</el-button>
+        <el-button type="warning" size="medium">上传图片</el-button>
+      </div>
     </el-header>
     <el-container>
       <el-aside width="200px" style="position: absolute;top:60px;left:0;bottom:60px">
-        <div style="height:1000px"></div>
+        <!-- 相册侧栏 -->
+        <template v-for="(item,index) in albumList">
+          <album-aside
+            :name="item.name"
+            :num="item.num"
+            :key="index"
+            @albumDelete="albumDelete(index)"></album-aside>
+        </template>
       </el-aside>
       <el-main  style="position: absolute;top:60px;right:0;bottom:60px">
         <div style="height:1000px"></div>
@@ -31,27 +44,33 @@
 </template>
 
 <script>
+import AlbumAside from './template/AlbumAside';
+
 export default {
   data() {
     return {
-      options: [{
-        value: '选项1',
-        label: '黄金糕',
-      }, {
-        value: '选项2',
-        label: '双皮奶',
-      }, {
-        value: '选项3',
-        label: '蚵仔煎',
-      }, {
-        value: '选项4',
-        label: '龙须面',
-      }, {
-        value: '选项5',
-        label: '北京烤鸭',
-      }],
       value: '',
+      searchForm: {
+        orderOptions: [],
+        keyword: '',
+      },
+      albumList: [],
     };
+  },
+  components: { AlbumAside },
+  created() {
+    this.initAlbum();
+  },
+  methods: {
+    initAlbum() {
+      for (let i = 1; i < 30; i++) {
+        this.albumList.push({ name: `相册${i}`, num: Math.ceil(Math.random() * 40) });
+      }
+    },
+    albumDelete(index) {
+      // console.log(index);
+      this.albumList.splice(index, 1);
+    },
   },
 };
 </script>
@@ -99,8 +118,18 @@ export default {
 .el-header {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid rgb(241, 229, 229);
+}
+ .left,.right {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center
+}
+.left {
+  width: 60%;
   .el-select {
     width: 25%;
   }
@@ -109,8 +138,14 @@ export default {
   }
   .el-button {
     width: 10%;
-    height: 40px;
-    margin-left: 10px;
   }
 }
+.el-aside {
+  padding: 15px;
+  background: #fff;
+  .album-list {
+    margin-bottom: 20px;
+  }
+}
+
 </style>
