@@ -28,3 +28,10 @@
 .el-dailog .el-dialog__header{
   text-align: left;
 }
+.el-dialog__body {
+  
+}
+.el-dialog__footer .el-button {
+  display: inline-block;
+  width: auto;
+}

@@ -29,7 +29,8 @@
             :name="item.name"
             :num="item.num"
             :key="index"
-            @albumDelete="albumDelete(index)"></album-aside>
+            @albumDelete="albumDelete(index)"
+            @reloadAlbums="reloadAlbums"></album-aside>
         </template>
       </el-aside>
       <el-main  style="position: absolute;top:60px;right:0;bottom:60px">
@@ -70,6 +71,12 @@ export default {
     albumDelete(index) {
       // console.log(index);
       this.albumList.splice(index, 1);
+    },
+    reloadAlbums(data, key) {
+      console.log(1);
+      console.log(key);
+      const newAblum = { name: data.name, num: data.num };
+      this.albumList.splice(data.num, 0, newAblum);
     },
   },
 };

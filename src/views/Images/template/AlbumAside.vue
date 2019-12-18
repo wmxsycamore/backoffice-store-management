@@ -13,8 +13,7 @@
     <el-dialog
       title="创建相册"
       :visible.sync="dialogVisible"
-      width="30%"
-      :before-close="handleClose">
+      width="30%">
       <el-form :model="modelRorm">
         <el-form-item label="相册名称">
           <el-input v-model="modelRorm.name"></el-input>
@@ -25,7 +24,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="submitAlbum(modelRorm)">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -72,6 +71,12 @@ export default {
     albumEdit() {
       this.dialogVisible = true;
     },
+    submitAlbum(modelRorm) {
+      this.dialogVisible = false;
+      // 向接口提交数据，同时给父组件发送事件（刷新相册边栏），没有接口，只需要把表单数据发送给父组件
+      this.$emit('reloadAlbums', modelRorm);
+    },
+    handleChange() {},
   },
 };
 </script>
@@ -93,7 +98,6 @@ export default {
       background: #efefef;
       border-radius: 6px;
     }
-
   }
 }
 </style>
