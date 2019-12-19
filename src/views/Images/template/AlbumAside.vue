@@ -1,7 +1,7 @@
 <template>
   <div class="album-list" ref="album">
     <span>{{name}}</span>
-    <el-dropdown>
+    <el-dropdown trigger="click">
       <span>
         {{num}}<i class="el-icon-arrow-down el-icon--right"></i>
       </span>
@@ -14,17 +14,17 @@
       title="创建相册"
       :visible.sync="dialogVisible"
       width="30%">
-      <el-form :model="modelRorm">
+      <el-form :model="modelForm" @submit.native.prevent>
         <el-form-item label="相册名称">
-          <el-input v-model="modelRorm.name"></el-input>
+          <el-input v-model="modelForm.name"></el-input>
         </el-form-item>
         <el-form-item label="相册排序">
-          <el-input-number v-model="modelRorm.num" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number>
+          <el-input-number v-model="modelForm.rank" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitAlbum(modelRorm)">确 定</el-button>
+        <el-button type="primary" @click="submitAlbum(modelForm)">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -39,15 +39,21 @@ export default {
       required: true,
     },
     num: Number,
+    rank: Number,
   },
   data() {
     return {
       dialogVisible: false,
-      modelRorm: {
-        name: '',
-        num: 1,
+      modelForm: {
+        name: this.name,
+        rank: this.rank,
       },
     };
+  },
+  watch: {
+    visible(v) {
+      console.log(v);
+    },
   },
   methods: {
     albumDel() {
@@ -71,10 +77,13 @@ export default {
     albumEdit() {
       this.dialogVisible = true;
     },
-    submitAlbum(modelRorm) {
+    submitAlbum(modelForm) {
       this.dialogVisible = false;
+      // 不能在子组件中修改有父组件传过来的值
+      // this.name = modelForm.name;
+      // this.rank = modelForm.rank;
       // 向接口提交数据，同时给父组件发送事件（刷新相册边栏），没有接口，只需要把表单数据发送给父组件
-      this.$emit('reloadAlbums', modelRorm);
+      this.$emit('reloadAlbums', modelForm, this.rank);
     },
     handleChange() {},
   },

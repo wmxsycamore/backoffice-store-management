@@ -28,7 +28,9 @@
           <album-aside
             :name="item.name"
             :num="item.num"
-            :key="index"
+            :key="item.num"
+            :rank="index"
+            ref="singleAlbum"
             @albumDelete="albumDelete(index)"
             @reloadAlbums="reloadAlbums"></album-aside>
         </template>
@@ -62,21 +64,22 @@ export default {
   created() {
     this.initAlbum();
   },
+  mounted() {
+
+  },
   methods: {
     initAlbum() {
       for (let i = 1; i < 30; i++) {
-        this.albumList.push({ name: `相册${i}`, num: Math.ceil(Math.random() * 40) });
+        this.albumList.push({ name: `相册${i}`, num: i });
       }
     },
     albumDelete(index) {
-      // console.log(index);
       this.albumList.splice(index, 1);
     },
-    reloadAlbums(data, key) {
-      console.log(1);
-      console.log(key);
-      const newAblum = { name: data.name, num: data.num };
-      this.albumList.splice(data.num, 0, newAblum);
+    reloadAlbums(data, data2) {
+      const editedAblum = { name: data.name, num: this.albumList[data2].num };
+      this.albumList.splice(data2, 1);
+      this.albumList.splice(data.rank - 1, 0, editedAblum);
     },
   },
 };
