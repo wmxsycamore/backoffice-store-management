@@ -6,43 +6,32 @@
         {{num}}<i class="el-icon-arrow-down el-icon--right"></i>
       </span>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item @click.stop.native="albumEdit">修改</el-dropdown-item>
+        <el-dropdown-item @click.stop.native=" dialogVisible = true">修改</el-dropdown-item>
         <el-dropdown-item @click.stop.native="albumDel">删除</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <el-dialog
-      title="创建相册"
-      :visible.sync="dialogVisible"
-      width="30%">
-      <el-form :model="modelForm" @submit.native.prevent>
-        <el-form-item label="相册名称">
-          <el-input v-model="modelForm.name"></el-input>
-        </el-form-item>
-        <el-form-item label="相册排序">
-          <el-input-number v-model="modelForm.rank" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitAlbum(modelForm)">确 定</el-button>
-      </span>
-    </el-dialog>
+    <edit-dialog
+      :title="title"
+      :visible.sync='dialogVisible'
+      :modelForm="modelForm"
+      @editAlbums="handleEdit"></edit-dialog>
   </div>
 </template>
 
 <script>
+import EditDialog from './EditDialog';
+
 export default {
   name: 'AlbumAside',
   props: {
-    name: {
-      type: String,
-      required: true,
-    },
+    name: String,
     num: Number,
     rank: Number,
   },
+  components: { EditDialog },
   data() {
     return {
+      title: '修改相册',
       dialogVisible: false,
       modelForm: {
         name: this.name,
@@ -52,7 +41,9 @@ export default {
   },
   watch: {
     visible(v) {
-      console.log(v);
+      if (v) {
+        this.dialogVisible = v;
+      }
     },
   },
   methods: {
@@ -74,18 +65,9 @@ export default {
         });
       });
     },
-    albumEdit() {
-      this.dialogVisible = true;
+    handleEdit(data) {
+      this.$emit('reloadAlbums', data, this.rank);
     },
-    submitAlbum(modelForm) {
-      this.dialogVisible = false;
-      // 不能在子组件中修改有父组件传过来的值
-      // this.name = modelForm.name;
-      // this.rank = modelForm.rank;
-      // 向接口提交数据，同时给父组件发送事件（刷新相册边栏），没有接口，只需要把表单数据发送给父组件
-      this.$emit('reloadAlbums', modelForm, this.rank);
-    },
-    handleChange() {},
   },
 };
 </script>

@@ -17,7 +17,7 @@
         <el-button type="success" size="medium">搜索</el-button>
       </div>
       <div class="right">
-        <el-button type="success" size="medium">创建相册</el-button>
+        <el-button type="success" size="medium" @click="addVisible=true">创建相册</el-button>
         <el-button type="warning" size="medium">上传图片</el-button>
       </div>
     </el-header>
@@ -36,18 +36,32 @@
         </template>
       </el-aside>
       <el-main  style="position: absolute;top:60px;right:0;bottom:60px">
-        <div style="height:1000px"></div>
+        <!-- 图片缩略图展示 -->
+        <template v-for="item in imageList">
+          <image-card
+            :imageUrl="item.url"
+            :key="item.name"
+            :imageName="item.name"></image-card>
+        </template>
       </el-main>
     </el-container>
     <el-footer>Footer</el-footer>
   </el-container>
-</div>
+
+  <edit-dialog
+    :title="title"
+    :visible.sync='addVisible'
+    :modelForm="{name:'',rank:1}"
+    @editAlbums="handleAdd"></edit-dialog>
+  </div>
 
 
 </template>
 
 <script>
 import AlbumAside from './template/AlbumAside';
+import ImageCard from './template/ImageCard';
+import EditDialog from './template/EditDialog';
 
 export default {
   data() {
@@ -58,9 +72,12 @@ export default {
         keyword: '',
       },
       albumList: [],
+      imageList: [],
+      title: '创建相册',
+      addVisible: false,
     };
   },
-  components: { AlbumAside },
+  components: { AlbumAside, ImageCard, EditDialog },
   created() {
     this.initAlbum();
   },
@@ -79,6 +96,10 @@ export default {
     reloadAlbums(data, data2) {
       const editedAblum = { name: data.name, num: this.albumList[data2].num };
       this.albumList.splice(data2, 1);
+      this.albumList.splice(data.rank - 1, 0, editedAblum);
+    },
+    handleAdd(data) {
+      const editedAblum = { name: data.name, num: 0 };
       this.albumList.splice(data.rank - 1, 0, editedAblum);
     },
   },
@@ -111,7 +132,6 @@ export default {
     text-align: center;
     line-height: 160px;
   }
-
   body > .el-container {
     margin-bottom: 40px;
   }
