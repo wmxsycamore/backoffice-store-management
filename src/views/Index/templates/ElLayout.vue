@@ -66,10 +66,9 @@ export default {
     roundOff: val => Math.floor(val),
   },
   created() {
-    console.log(this.data);
+    // console.log(this.data);
   },
   mounted() {
-    console.log(this.$refs.chart);
     if (this.$refs.chart) {
       this.drawCharts();
     }

@@ -30,22 +30,35 @@
             :num="item.num"
             :key="item.num"
             :rank="index"
-            ref="singleAlbum"
+            @click.native="selectAblum(item,index)"
             @albumDelete="albumDelete(index)"
             @reloadAlbums="reloadAlbums"></album-aside>
         </template>
       </el-aside>
-      <el-main  style="position: absolute;top:60px;right:0;bottom:60px">
+      <el-main class="main1" style="">
         <!-- 图片缩略图展示 -->
-        <template v-for="item in imageList">
+        <template v-for="(item, index) in imageList" ref="imageList">
           <image-card
-            :imageUrl="item.url"
-            :key="item.name"
-            :imageName="item.name"></image-card>
+            :albums='albums'
+            :imageUrl="item.imageUrl"
+            :key="item.id"
+            :index="index"
+            :imageName="item.imageName"
+            @delIamge="deleteIamge(index)"
+            @editImage="editImage"></image-card>
         </template>
       </el-main>
     </el-container>
-    <el-footer>Footer</el-footer>
+    <el-footer>
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[20, 40, 60]"
+        :page-size="20"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="this.imageList.length"></el-pagination>
+    </el-footer>
   </el-container>
 
   <edit-dialog
@@ -73,8 +86,11 @@ export default {
       },
       albumList: [],
       imageList: [],
+      selectedAblum: 0,
+      albums: [],
       title: '创建相册',
       addVisible: false,
+      currentPage: 1,
     };
   },
   components: { AlbumAside, ImageCard, EditDialog },
@@ -84,11 +100,28 @@ export default {
   mounted() {
 
   },
+  watch: {
+    selectedAblum(val) {
+      this.imageList = this.albumList[val].images;
+    },
+  },
   methods: {
+    selectAblum(item, index) {
+      if (item) {
+        this.imageList = this.albumList[index].images;
+        this.selectedAblum = index;
+      }
+      this.imageList = this.albumList[0].images;
+    },
     initAlbum() {
       for (let i = 1; i < 30; i++) {
-        this.albumList.push({ name: `相册${i}`, num: i });
+        this.albumList.push({ name: `相册${i}`, num: i * 20, images: [] });
+        for (let j = 0; j < this.albumList[i - 1].num; j++) {
+          this.albumList[i - 1].images.push({ id: `${i}${j}`, imageUrl: `images/相册${i}/图片${j}`, imageName: `图片${j}` });
+        }
       }
+      this.imageList = this.albumList[0].images;
+      this.albums = this.albumList.map(item => item.name);
     },
     albumDelete(index) {
       this.albumList.splice(index, 1);
@@ -101,6 +134,26 @@ export default {
     handleAdd(data) {
       const editedAblum = { name: data.name, num: 0 };
       this.albumList.splice(data.rank - 1, 0, editedAblum);
+    },
+    deleteIamge(index) {
+      this.albumList[this.selectedAblum].images.splice(index, 1);
+      this.albumList[this.selectedAblum].num -= 1;
+    },
+    editImage(data1, data2) {
+      console.log(this.albumList[this.selectedAblum].name);
+      if (data1.path !== this.albumList[this.selectedAblum].name) {
+        const index = this.albumList.findIndex(item => item.name === data1.path);
+        this.albumList[index].images.push({ imageUrl: `images/相册${index}/${data1.name}`, imageName: data1.name });
+        this.albumList[index].num += 1;
+        this.albumList[this.selectedAblum].images.splice(data2, 1);
+        this.albumList[this.selectedAblum].num -= 1;
+      }
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
     },
   },
 };
@@ -177,5 +230,19 @@ export default {
     margin-bottom: 20px;
   }
 }
-
+.main1 {
+  position: absolute;
+  left: 200px;top:60px;
+  right:0;bottom:60px;
+  display: flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  &:after {
+    content: "";
+    width:282px;
+  }
+  .image-card {
+    margin-bottom: 20px;
+  }
+}
 </style>
