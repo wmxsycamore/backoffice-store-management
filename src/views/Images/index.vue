@@ -91,6 +91,7 @@ export default {
       title: '创建相册',
       addVisible: false,
       currentPage: 1,
+      currentPageSize: 20,
     };
   },
   components: { AlbumAside, ImageCard, EditDialog },
@@ -113,14 +114,14 @@ export default {
       }
       this.imageList = this.albumList[0].images;
     },
-    initAlbum() {
+    initAlbum(size, page) {
       for (let i = 1; i < 30; i++) {
         this.albumList.push({ name: `相册${i}`, num: i * 20, images: [] });
         for (let j = 0; j < this.albumList[i - 1].num; j++) {
           this.albumList[i - 1].images.push({ id: `${i}${j}`, imageUrl: `images/相册${i}/图片${j}`, imageName: `图片${j}` });
         }
       }
-      this.imageList = this.albumList[0].images;
+      this.imageList = this.albumList[0].images.slice((page - 1) * size, page * size);
       this.albums = this.albumList.map(item => item.name);
     },
     albumDelete(index) {
@@ -150,10 +151,12 @@ export default {
       }
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.currentPageSize = val;
+      // console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
+      this.initAlbum(this.currentPageSize, val);
     },
   },
 };
