@@ -17,8 +17,10 @@
         <el-button type="success" size="medium">搜索</el-button>
       </div>
       <div class="right">
+        <el-button type="warning" size="small" @click="unChoose">取消选中</el-button>
+        <el-button type="danger" size="small" @click="batchDel">批量删除</el-button>
         <el-button type="success" size="medium" @click="addVisible=true">创建相册</el-button>
-        <el-button type="warning" size="medium">上传图片</el-button>
+        <el-button type="warning" size="medium" @click="uploadVisible=true">上传图片</el-button>
       </div>
     </el-header>
     <el-container>
@@ -44,8 +46,11 @@
             :key="item.id"
             :index="index"
             :imageName="item.imageName"
+            :chooseOrder="chooseOrder"
+            :isChoosen="isChoosen"
             @delIamge="deleteIamge(index)"
-            @editImage="editImage"></image-card>
+            @editImage="editImage"
+            @click="selectedIamge(item)"></image-card>
         </template>
       </el-main>
     </el-container>
@@ -57,7 +62,7 @@
         :page-sizes="[20, 40, 60]"
         :page-size="20"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="this.imageList.length"></el-pagination>
+        :total="totalNum"></el-pagination>
     </el-footer>
   </el-container>
 
@@ -66,6 +71,7 @@
     :visible.sync='addVisible'
     :modelForm="{name:'',rank:1}"
     @editAlbums="handleAdd"></edit-dialog>
+  <Upload :visible.sync='uploadVisible'></Upload>
   </div>
 
 
@@ -75,6 +81,7 @@
 import AlbumAside from './template/AlbumAside';
 import ImageCard from './template/ImageCard';
 import EditDialog from './template/EditDialog';
+import Upload from './template/Upload';
 
 export default {
   data() {
@@ -90,39 +97,50 @@ export default {
       albums: [],
       title: '创建相册',
       addVisible: false,
+      uploadVisible: false,
       currentPage: 1,
       currentPageSize: 20,
+      totalNum: 20,
+      chooseOrder: 0,
+      isChoosen: false,
+      choosenImagesList: [],
     };
   },
-  components: { AlbumAside, ImageCard, EditDialog },
+  components: {
+    AlbumAside, ImageCard, EditDialog, Upload,
+  },
   created() {
-    this.initAlbum();
+    // mock相册数据
+    for (let i = 1; i < 30; i++) {
+      this.albumList.push({ name: `相册${i}`, num: i * 20, images: [] });
+      for (let j = 0; j < this.albumList[i - 1].num; j++) {
+        this.albumList[i - 1].images.push({ id: `${i}${j}`, imageUrl: `images/相册${i}/图片${j}`, imageName: `图片${j}` });
+      }
+    }
+    this.albums = this.albumList.map(item => item.name);
+    this.imageList = this.albumList[0].images.slice(0, this.currentPageSize);
   },
   mounted() {
 
   },
   watch: {
     selectedAblum(val) {
-      this.imageList = this.albumList[val].images;
+      this.totalNum = this.albumList[val].images.length;
+      this.imageList = this.albumList[val].images.slice(0, this.currentPageSize);
     },
   },
   methods: {
     selectAblum(item, index) {
       if (item) {
-        this.imageList = this.albumList[index].images;
+        // this.imageList = this.albumList[index].images;
         this.selectedAblum = index;
+        this.initAlbum(20, 1);
       }
       this.imageList = this.albumList[0].images;
     },
+    // 根据页面规格和当前页面获取数据
     initAlbum(size, page) {
-      for (let i = 1; i < 30; i++) {
-        this.albumList.push({ name: `相册${i}`, num: i * 20, images: [] });
-        for (let j = 0; j < this.albumList[i - 1].num; j++) {
-          this.albumList[i - 1].images.push({ id: `${i}${j}`, imageUrl: `images/相册${i}/图片${j}`, imageName: `图片${j}` });
-        }
-      }
-      this.imageList = this.albumList[0].images.slice((page - 1) * size, page * size);
-      this.albums = this.albumList.map(item => item.name);
+      this.imageList = this.albumList[this.selectedAblum].images.slice(size * (page - 1), size * page);
     },
     albumDelete(index) {
       this.albumList.splice(index, 1);
@@ -137,8 +155,15 @@ export default {
       this.albumList.splice(data.rank - 1, 0, editedAblum);
     },
     deleteIamge(index) {
-      this.albumList[this.selectedAblum].images.splice(index, 1);
+      this.imageList.splice(index, 1);
       this.albumList[this.selectedAblum].num -= 1;
+      if (this.albumList[this.selectedAblum].num <= 0) {
+        this.$message({
+          dangerouslyUseHTMLString: true,
+          message: '当前相册没有图片',
+        });
+        this.albumList[this.selectedAblum].num = 0;
+      }
     },
     editImage(data1, data2) {
       console.log(this.albumList[this.selectedAblum].name);
@@ -150,9 +175,18 @@ export default {
         this.albumList[this.selectedAblum].num -= 1;
       }
     },
+    selectedIamge(item) {
+      // 选中图片
+      this.isChoosen = !this.isChoosen;
+      if (this.isChoosen) {
+        this.choosenImagesList.push(item);
+      }
+      console.log(1);
+    },
     handleSizeChange(val) {
       this.currentPageSize = val;
       // console.log(`每页 ${val} 条`);
+      this.initAlbum(val, 1);
     },
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);

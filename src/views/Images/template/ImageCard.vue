@@ -1,17 +1,22 @@
 <template>
 <div class="image-card">
-  <el-card :body-style="{ padding: '0px'}" style="flex-direction: column;display: flex">
+  <el-card
+    :body-style="{ padding: '0px'}"
+    style="flex-direction: column;display: flex;position:relative"
+    :class="{isChecked:isChecked}"
+    @click.stop.native="selected()">
     <div class="img">
       <img :src="url" ref="image">
       <p>{{dialogForm.name}}</p>
     </div>
     <div style="padding: 14px;">
       <el-button-group style="">
-        <el-button icon="el-icon-view" @click.stop.native="checkImage(url)"></el-button>
+        <el-button icon="el-icon-view" @click.stop.native="preview(url)"></el-button>
         <el-button icon="el-icon-edit" @click.stop.native="editImage(dialogForm)"></el-button>
         <el-button icon="el-icon-delete" @click.stop.native="delIamge"></el-button>
       </el-button-group>
     </div>
+     <div class="tag" v-show="isChecked" style="position:absolute">{{num}}</div>
   </el-card>
   <el-dialog
     title="修改图片"
@@ -35,6 +40,7 @@
       <el-button type="primary" @click="submitAlbum(dialogForm)">确 定</el-button>
     </span>
   </el-dialog>
+
 </div>
 </template>
 
@@ -53,12 +59,16 @@ export default {
     },
     albums: Array,
     index: Number,
+    chooseOrder: Number,
+    isChoosen: Boolean,
   },
   data() {
     return {
       dialogVisible: false,
       name: this.imageName,
       url: this.imageUrl,
+      isChecked: false,
+      num: 1,
       dialogForm: {
         name: this.imageName,
         path: this.imageUrl.split('/')[1],
@@ -71,8 +81,8 @@ export default {
     },
   },
   methods: {
-    // checkImage() {
-    //   const viewer = new Viewer(this.$ref.image, {
+    // preview() {
+    //   const viewer = new Viewer(this.$refs.image, {
     //     url: `${this.imageUrl}/big`,
     //   });
     // },
@@ -89,14 +99,32 @@ export default {
       this.dialogVisible = false;
       this.$emit('editImage', dialogForm, this.index);
     },
+    selected() {
+      this.isChecked = !this.isChecked;
+    },
   },
 };
 </script>
 
 <style lang="scss">
+.isChecked {
+  width: 100%;
+ height: 100%;
+  border: 1px red solid;
+}
 .image-card {
 .el-card {
   width: 280px;
+  .tag {
+    width: 20px;
+    height: 25px;
+    background-color: rgb(221, 60, 60);
+    color: #fff;
+    text-align: center;
+    line-height: 25px;
+    top: 10px;
+    right: 10px;
+  }
   .el-card__body {
     flex-direction: column;
     display: flex;
