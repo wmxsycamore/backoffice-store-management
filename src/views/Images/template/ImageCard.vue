@@ -3,8 +3,7 @@
   <el-card
     :body-style="{ padding: '0px'}"
     style="flex-direction: column;display: flex;position:relative"
-    :class="{isChecked:isChecked}"
-    @click.stop.native="selected()">
+    :class="{isChecked:isChoosen}">
     <div class="img">
       <img :src="url" ref="image">
       <p>{{dialogForm.name}}</p>
@@ -16,7 +15,7 @@
         <el-button icon="el-icon-delete" @click.stop.native="delIamge"></el-button>
       </el-button-group>
     </div>
-     <div class="tag" v-show="isChecked" style="position:absolute">{{num}}</div>
+     <div class="tag" v-show="isChoosen" style="position:absolute">{{checkOrder}}</div>
   </el-card>
   <el-dialog
     title="修改图片"
@@ -59,7 +58,7 @@ export default {
     },
     albums: Array,
     index: Number,
-    chooseOrder: Number,
+    checkOrder: Number,
     isChoosen: Boolean,
   },
   data() {
@@ -67,8 +66,6 @@ export default {
       dialogVisible: false,
       name: this.imageName,
       url: this.imageUrl,
-      isChecked: false,
-      num: 1,
       dialogForm: {
         name: this.imageName,
         path: this.imageUrl.split('/')[1],
@@ -99,9 +96,9 @@ export default {
       this.dialogVisible = false;
       this.$emit('editImage', dialogForm, this.index);
     },
-    selected() {
-      this.isChecked = !this.isChecked;
-    },
+    // selected() {
+    //   this.isChecked = !this.isChecked;
+    // },
   },
 };
 </script>

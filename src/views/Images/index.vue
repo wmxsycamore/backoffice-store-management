@@ -17,8 +17,8 @@
         <el-button type="success" size="medium">搜索</el-button>
       </div>
       <div class="right">
-        <el-button type="warning" size="small" @click="unChoose">取消选中</el-button>
-        <el-button type="danger" size="small" @click="batchDel">批量删除</el-button>
+        <el-button v-if="choosenImagesList.length" type="warning" size="small" @click="unChoose">取消选中</el-button>
+        <el-button v-if="choosenImagesList.length" type="danger" size="small" @click="batchDel">批量删除</el-button>
         <el-button type="success" size="medium" @click="addVisible=true">创建相册</el-button>
         <el-button type="warning" size="medium" @click="uploadVisible=true">上传图片</el-button>
       </div>
@@ -46,11 +46,11 @@
             :key="item.id"
             :index="index"
             :imageName="item.imageName"
-            :chooseOrder="chooseOrder"
-            :isChoosen="isChoosen"
+            :checkOrder="item.checkOrder"
+            :isChoosen="item.isChoosen"
             @delIamge="deleteIamge(index)"
             @editImage="editImage"
-            @click="selectedIamge(item)"></image-card>
+            @click.native="selectedIamge(item)"></image-card>
         </template>
       </el-main>
     </el-container>
@@ -101,8 +101,6 @@ export default {
       currentPage: 1,
       currentPageSize: 20,
       totalNum: 20,
-      chooseOrder: 0,
-      isChoosen: false,
       choosenImagesList: [],
     };
   },
@@ -114,7 +112,13 @@ export default {
     for (let i = 1; i < 30; i++) {
       this.albumList.push({ name: `相册${i}`, num: i * 20, images: [] });
       for (let j = 0; j < this.albumList[i - 1].num; j++) {
-        this.albumList[i - 1].images.push({ id: `${i}${j}`, imageUrl: `images/相册${i}/图片${j}`, imageName: `图片${j}` });
+        this.albumList[i - 1].images.push({
+          id: `${i}${j}`,
+          imageUrl: `images/相册${i}/图片${j}`,
+          imageName: `图片${j}`,
+          isChoosen: false,
+          checkOrder: 0,
+        });
       }
     }
     this.albums = this.albumList.map(item => item.name);
@@ -127,6 +131,9 @@ export default {
     selectedAblum(val) {
       this.totalNum = this.albumList[val].images.length;
       this.imageList = this.albumList[val].images.slice(0, this.currentPageSize);
+    },
+    imageList() {
+      this.albumList[this.selectedAblum].num = this.imageList.length;
     },
   },
   methods: {
@@ -176,12 +183,35 @@ export default {
       }
     },
     selectedIamge(item) {
-      // 选中图片
-      this.isChoosen = !this.isChoosen;
-      if (this.isChoosen) {
-        this.choosenImagesList.push(item);
+      // 之前未选中
+      if (!item.isChoosen) {
+        // 添加数组
+        this.choosenImagesList.push({ id: item.id, url: item.url });
+        // 改变顺序
+        item.checkOrder = this.choosenImagesList.length;
+        // 修改状态
+        item.isChoosen = true;
+        // 取消选中
+      } else if (item.isChoosen) {
+        // 找到索引，删除
+        const i = this.choosenImagesList.findIndex(v => v.id === item.id);
+        if (i === -1) return;
+        // 重新计算序号，如果取消的是最后一个不用重新计算编号，但是如果取消的是中间选中的，需要重新计算编号
+        const length = this.choosenImagesList.length;
+        // 取消选中中间的图片
+        if (i + 1 < length) {
+          for (let j = i; j < length; j++) {
+            const no = this.imageList.findIndex(v => v.id === this.choosenImagesList[j].id);
+            if (no !== -1) {
+              this.imageList[no].checkOrder -= 1;
+            }
+          }
+        }
+        // 删除
+        this.choosenImagesList.splice(i, 1);
+        // 改变状态
+        item.isChoosen = false;
       }
-      console.log(1);
     },
     handleSizeChange(val) {
       this.currentPageSize = val;
@@ -192,8 +222,41 @@ export default {
       // console.log(`当前页: ${val}`);
       this.initAlbum(this.currentPageSize, val);
     },
+    unChoose() {
+      this.imageList.forEach(img => {
+        const i = this.choosenImagesList.findIndex(item => item.id === img.id);
+        if (i > -1) {
+          img.isChoosen = false;
+          img.checkOrder = 0;
+          this.choosenImagesList.splice(i, 1);
+        }
+      });
+    },
+    batchDel() {
+      if (this.choosenImagesList.length == 0) {
+        this.$message.error('没有选中任何图片');
+      }
+      this.$confirm('此操作将永久删除选中图片, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!',
+        });
+        this.imageList = this.imageList.filter(img => !this.choosenImagesList.some(c => c.id === img.id));
+        this.choosenImagesList = [];
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除',
+        });
+      });
+    },
   },
 };
+
 </script>
 
 <style scoped lang="scss">
